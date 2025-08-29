@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="mt-4">
+    <h2>Resultados y Estadísticas</h2>
+    <div class="row">
+        <div class="col-md-6">
+            <ul class="list-group">
+                <li class="list-group-item">Puntaje total: <strong>{{ puntaje }}</strong></li>
+                <li class="list-group-item">Respuestas correctas: <strong>{{ correctas }}</strong></li>
+                <li class="list-group-item">Respuestas incorrectas: <strong>{{ incorrectas }}</strong></li>
+            </ul>
+        </div>
+        <div class="col-md-6">
+            <canvas id="graficaResultados" width="400" height="200"></canvas>
+        </div>
+    </div>
+    {% if feedback %}
+    <hr>
+    <h4>Detalle de respuestas</h4>
+    <ul class="list-group mb-4">
+        {% for exp in feedback %}
+        <li class="list-group-item">{{ exp }}</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+    <hr>
+    <h4>Historial de resultados</h4>
+    <div class="table-responsive">
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Fecha</th>
+                    <th>Usuario</th>
+                    <th>Puntaje</th>
+                    <th>Correctas</th>
+                    <th>Incorrectas</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for r in todos %}
+                <tr>
+                    <td>{{ r['fecha'] }}</td>
+                    <td>{{ r['usuario'] }}</td>
+                    <td>{{ r['puntaje'] }}</td>
+                    <td>{{ r['respuestas_correctas'] }}</td>
+                    <td>{{ r['respuestas_incorrectas'] }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <form method="post" action="{{ url_for('reset_results') }}" class="mb-3">
+        <button type="submit" class="btn btn-danger">Borrar historial de resultados</button>
+    </form>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        var ctx = document.getElementById('graficaResultados').getContext('2d');
+        var chart = new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Correctas', 'Incorrectas'],
+                datasets: [{
+                    data: [Number("{{ correctas|default(0)|int }}"), Number("{{ incorrectas|default(0)|int }}")],
+                    backgroundColor: ['#198754', '#dc3545']
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: { position: 'bottom' }
+                }
+            }
+        });
+    </script>
+</div>
+{% endblock %}

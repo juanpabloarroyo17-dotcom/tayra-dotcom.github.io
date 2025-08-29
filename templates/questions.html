@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="mt-4">
+    {% if mensaje %}
+    <div class="alert alert-success">{{ mensaje }}</div>
+    {% endif %}
+    <h2>Banco de Preguntas</h2>
+    <div class="d-flex align-items-center mb-3">
+        <div class="flex-grow-1"></div>
+        <img src="/static/ppe_logo.png" alt="Logo PPE" style="max-width: 100px; height: auto; margin-left: 16px;">
+    </div>
+    <form method="post" class="mb-4 p-3 border rounded bg-light">
+        <div class="row g-2">
+            <div class="col-md-2">
+                <label class="form-label">Materia</label>
+                <select name="materia" class="form-select" required>
+                    <option value="">Selecciona</option>
+                    <option value="Español">Español</option>
+                    <option value="Matemáticas">Matemáticas</option>
+                    <option value="Biología">Biología</option>
+                    <option value="Estudios Sociales">Estudios Sociales</option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <label class="form-label">Dificultad</label>
+                <select name="dificultad" class="form-select" required>
+                    <option value="">Selecciona</option>
+                    <option value="Fácil">Fácil</option>
+                    <option value="Media">Media</option>
+                    <option value="Difícil">Difícil</option>
+                </select>
+            </div>
+            <div class="col-md-4">
+                <label class="form-label">Pregunta</label>
+                <input type="text" name="pregunta" class="form-control" required>
+            </div>
+            <div class="col-md-4">
+                <label class="form-label">Opciones (separadas por |)</label>
+                <input type="text" name="opciones" class="form-control" required placeholder="Ejemplo: opción1|opción2|opción3|opción4">
+            </div>
+        </div>
+        <div class="row g-2 mt-2">
+            <div class="col-md-4">
+                <label class="form-label">Respuesta Correcta</label>
+                <input type="text" name="respuesta_correcta" class="form-control" required>
+            </div>
+        </div>
+        <button type="submit" class="btn btn-success mt-3">Agregar pregunta</button>
+    </form>
+    <table class="table table-bordered table-hover">
+        <thead class="table-primary">
+            <tr>
+                <th>Materia</th>
+                <th>Dificultad</th>
+                <th>Pregunta</th>
+                <th>Opciones</th>
+                <th>Respuesta Correcta</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for p in preguntas %}
+            <tr>
+                <td>{{ p['materia'] }}</td>
+                <td>{{ p['dificultad'] }}</td>
+                <td>{{ p['pregunta'] }}</td>
+                <td>{{ p['opciones'] }}</td>
+                <td>{{ p['respuesta_correcta'] }}</td>
+                <td>
+                    <form method="post" action="{{ url_for('delete_question', question_id=p['id']) }}" style="display:inline;">
+                        <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('¿Seguro que deseas eliminar esta pregunta?');">Eliminar</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
